@@ -21,7 +21,7 @@
         .dashboard-header {
             background: rgba(0,0,0,0.8);
             padding: 20px;
-            border-bottom: 1px solid rgba(229, 9, 20, 0.3);
+            border-bottom: 1px solid rgba(229,9,20,0.3);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -59,7 +59,7 @@
         }
         
         .logout-btn {
-            background: rgba(229, 9, 20, 0.2);
+            background: rgba(229,9,20,0.2);
             color: #E50914;
             border: 1px solid #E50914;
             padding: 8px 20px;
@@ -389,13 +389,9 @@
             return status || '—';
         }
         
-        // ============================================
-        // FUNÇÕES AUXILIARES PARA CÁLCULO NO FRONTEND
-        // ============================================
         function extrairNumeroValor(valorStr) {
             if (!valorStr) return 0;
             const str = String(valorStr);
-            // Remove R$, espaços, pontos de milhar e troca vírgula por ponto
             const numero = parseFloat(str.replace(/R\$/g, '').replace(/\./g, '').replace(/,/g, '.').trim());
             return isNaN(numero) ? 0 : numero;
         }
@@ -441,7 +437,19 @@
             const evolucao = dados.evolucao;
             const chavePix = dados.chave_pix || '16993272278';
             
-            const sugestoes = gerarSugestoes(aluno.perfil_aprendizagem, aluno.ultimo_nivel);
+            // ============================================
+            // CORREÇÃO: ACEITA QUALQUER NOME DE CAMPO PARA PERFIL
+            // ============================================
+            let perfilAluno = aluno.perfil_ap || aluno.perfil || aluno.perfil_aprendizagem || '';
+            
+            if (!perfilAluno || perfilAluno === '') {
+                perfilAluno = 'Visual';
+                console.log("⚠️ Perfil não encontrado, usando padrão: Visual");
+            }
+            
+            console.log("✅ PERFIL FINAL:", perfilAluno);
+            
+            const sugestoes = gerarSugestoes(perfilAluno, aluno.ultimo_nivel);
             
             let statusClass = '';
             let statusText = '';
@@ -481,7 +489,7 @@
                     <div class="welcome-card">
                         <h1>🎓 Bem-vindo(a) de volta!</h1>
                         <p>Seu último acesso foi em ${aluno.ultimo_acesso || 'primeiro acesso'}.</p>
-                        <p style="margin-top: 8px;">👩‍🏫 Professora responsável: <strong>${aluno.responsavel_financeiro || 'Diandra'}</strong></p>
+                        <p style="margin-top: 8px;">👩‍🏫 Professora responsável: <strong>${aluno.professor_responsavel || 'Diandra'}</strong></p>
                     </div>
                     
                     <div class="info-grid">
@@ -498,7 +506,7 @@
                         <div class="info-card">
                             <div class="card-icon">🧠</div>
                             <div class="card-title">Perfil de Aprendizagem</div>
-                            <div class="card-value">${aluno.perfil_aprendizagem || 'Não definido'}</div>
+                            <div class="card-value">${perfilAluno}</div>
                         </div>
                         <div class="info-card">
                             <div class="card-icon">📅</div>
