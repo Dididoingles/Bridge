@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Área do Aluno - Diandra</title>
+    <title>Meu Painel - Diandra</title>
     <style>
         * {
             margin: 0;
@@ -12,188 +12,660 @@
         }
         
         body {
-            background: linear-gradient(135deg, #080808 0%, #000c1f 100%);
+            background: linear-gradient(180deg, #080808 0%, #000c1f 100%);
             font-family: 'Poppins', sans-serif;
+            color: #F5F5F5;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        }
+        
+        .dashboard-header {
+            background: rgba(0,0,0,0.8);
             padding: 20px;
+            border-bottom: 1px solid rgba(229, 9, 20, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
-        .login-container {
-            background: rgba(20, 20, 20, 0.95);
-            border-radius: 24px;
-            padding: 40px;
-            max-width: 400px;
-            width: 100%;
-            border: 1px solid rgba(229, 9, 20, 0.3);
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         
-        .logo {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-        
-        .logo h1 {
+        .logo h2 {
             color: #E50914;
-            font-size: 1.8rem;
+            font-size: 1.3rem;
         }
         
         .logo p {
+            font-size: 0.7rem;
             color: #b3b3b3;
-            font-size: 0.8rem;
         }
         
-        .input-group {
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .user-name {
+            font-weight: 600;
+        }
+        
+        .logout-btn {
+            background: rgba(229, 9, 20, 0.2);
+            color: #E50914;
+            border: 1px solid #E50914;
+            padding: 8px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: #E50914;
+            color: white;
+        }
+        
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #b3b3b3;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, rgba(229,9,20,0.1) 0%, rgba(0,0,0,0.5) 100%);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 4px solid #E50914;
+        }
+        
+        .welcome-card h1 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .welcome-card p {
+            color: #b3b3b3;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .info-card {
+            background: rgba(20,20,20,0.8);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(229,9,20,0.3);
+        }
+        
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 0.8rem;
+            color: #b3b3b3;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .card-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .status-ativa { color: #4CAF50; }
+        .status-suspensa { color: #FF9800; }
+        .status-cancelada { color: #E50914; }
+        
+        .evolution-card {
+            background: rgba(20,20,20,0.8);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .evolution-title {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .level-comparison {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
             margin-bottom: 20px;
         }
         
-        label {
-            display: block;
+        .level-item {
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .level-label {
+            font-size: 0.7rem;
             color: #b3b3b3;
-            margin-bottom: 8px;
-            font-size: 0.8rem;
-            font-weight: 500;
+            text-transform: uppercase;
         }
         
-        input {
+        .level-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #E50914;
+        }
+        
+        .arrow {
+            font-size: 2rem;
+            color: #E50914;
+        }
+        
+        .evolution-message {
+            background: rgba(229,9,20,0.1);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 3px solid #E50914;
+            padding-left: 15px;
+        }
+        
+        .boletos-table {
             width: 100%;
-            padding: 14px;
-            background: #1a1a1a;
-            border: 1px solid #333;
+            background: rgba(20,20,20,0.8);
             border-radius: 12px;
-            color: white;
-            font-size: 1rem;
+            overflow: hidden;
+            margin-bottom: 30px;
         }
         
-        input:focus {
-            outline: none;
-            border-color: #E50914;
-        }
-        
-        button {
+        .boletos-table table {
             width: 100%;
-            padding: 14px;
-            background: #E50914;
+            border-collapse: collapse;
+        }
+        
+        .boletos-table th,
+        .boletos-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .boletos-table th {
+            background: rgba(0,0,0,0.5);
+            color: #b3b3b3;
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+        
+        .status-pago { color: #4CAF50; }
+        .status-pendente { color: #FF9800; }
+        .status-atrasado { color: #E50914; }
+        
+        .pix-card {
+            background: rgba(20,20,20,0.8);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .pix-key-container {
+            background: #1a1a1a;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px auto;
+            max-width: 300px;
+            word-break: break-all;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .pix-key-text {
+            font-family: monospace;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .copy-btn {
+            background: #4CAF50;
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 30px;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 8px;
-        }
-        
-        button:hover {
-            background: #b20710;
-        }
-        
-        .error {
-            background: rgba(229, 9, 20, 0.15);
-            border-left: 3px solid #E50914;
-            padding: 12px;
-            margin-top: 20px;
-            border-radius: 8px;
             font-size: 0.8rem;
-            color: #E50914;
-            display: none;
+            font-weight: 500;
+            transition: all 0.2s;
         }
         
-        .help {
-            text-align: center;
-            margin-top: 24px;
-            color: #666;
+        .copy-btn:hover {
+            background: #45a049;
+            transform: scale(1.02);
+        }
+        
+        .copy-btn.copied {
+            background: #2196F3;
+        }
+        
+        .copy-feedback {
+            display: inline-block;
+            margin-left: 10px;
             font-size: 0.7rem;
+            color: #4CAF50;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
         
-        .back-link {
-            text-align: center;
-            margin-top: 16px;
+        .copy-feedback.show {
+            opacity: 1;
         }
         
-        .back-link a {
-            color: #666;
-            text-decoration: none;
-            font-size: 0.75rem;
+        .sugestoes-card {
+            background: rgba(20,20,20,0.8);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 20px;
         }
         
-        .back-link a:hover {
-            color: #E50914;
+        .sugestoes-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+        
+        .sugestoes-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .plano-recomendado {
+            background: rgba(229,9,20,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            border-left: 3px solid #E50914;
+        }
+        
+        @media (max-width: 600px) {
+            .dashboard-container {
+                padding: 20px 15px;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .boletos-table {
+                overflow-x: auto;
+            }
+            .boletos-table table {
+                min-width: 500px;
+            }
+            .level-comparison {
+                flex-direction: column;
+            }
+            .arrow {
+                transform: rotate(90deg);
+            }
+            .pix-key-container {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="logo">
-            <h1>Área do Aluno</h1>
-            <p>Digite seu token e senha de acesso</p>
-        </div>
-        
-        <div class="input-group">
-            <label>🔑 Token de Acesso</label>
-            <input type="text" id="token" placeholder="Ex: 1001" autocomplete="off">
-        </div>
-        
-        <div class="input-group">
-            <label>🔒 Senha</label>
-            <input type="password" id="senha" placeholder="Sua senha de acesso">
-        </div>
-        
-        <button onclick="fazerLogin()">Entrar →</button>
-        
-        <div id="error" class="error"></div>
-        
-        <div class="help">
-            💡 Clique em entrar e aguarde. O sistema leva uns minutinhos para atualizar.
-        </div>
-        
-        <div class="back-link">
-            <a href="index.html">← Voltar para o site</a>
-        </div>
+    <div id="app">
+        <div class="loading">Carregando seus dados...</div>
     </div>
     
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbymaWWBf5OEV0oFLuRwhYpCk8aSEx1FwPTz25MWLxy-xsQikwxoVqLOGKZ4Xys1HtDf/exec';
         
-        async function fazerLogin() {
-            const token = document.getElementById('token').value.trim();
-            const senha = document.getElementById('senha').value.trim();
-            const errorDiv = document.getElementById('error');
-            
-            if (!token || !senha) {
-                errorDiv.style.display = 'block';
-                errorDiv.textContent = 'Por favor, preencha token e senha';
-                return;
-            }
-            
-            errorDiv.style.display = 'none';
-            
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token') || sessionStorage.getItem('alunoToken');
+        
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+        
+        function getStatusClass(status) {
+            const s = status?.toLowerCase() || '';
+            if (s === 'pago') return 'status-pago';
+            if (s === 'pendente') return 'status-pendente';
+            if (s === 'atrasado') return 'status-atrasado';
+            return '';
+        }
+        
+        function getStatusText(status) {
+            const s = status?.toLowerCase() || '';
+            if (s === 'pago') return '✅ Pago';
+            if (s === 'pendente') return '⏳ Pendente';
+            if (s === 'atrasado') return '⚠️ Atrasado';
+            return status || '—';
+        }
+        
+        async function carregarDados() {
             try {
-                const response = await fetch(`${API_URL}?action=autenticar&token=${encodeURIComponent(token)}&senha=${encodeURIComponent(senha)}`);
+                const response = await fetch(`${API_URL}?action=buscar&token=${encodeURIComponent(token)}`);
                 const result = await response.json();
                 
                 if (result.success) {
-                    sessionStorage.setItem('alunoToken', result.token);
-                    sessionStorage.setItem('alunoNome', result.nome);
-                    window.location.href = `dashboard.html?token=${result.token}`;
+                    renderizarDashboard(result);
                 } else {
-                    errorDiv.style.display = 'block';
-                    errorDiv.textContent = result.message || 'Token ou senha inválidos';
+                    document.getElementById('app').innerHTML = `
+                        <div style="text-align:center; padding:50px;">
+                            <h2 style="color:#E50914;">Erro ao carregar dados</h2>
+                            <p>${result.message || 'Token inválido ou expirado'}</p>
+                            <a href="login.html" style="color:#E50914;">Voltar para o login</a>
+                        </div>
+                    `;
                 }
             } catch (error) {
-                errorDiv.style.display = 'block';
-                errorDiv.textContent = 'Erro de conexão. Tente novamente.';
+                document.getElementById('app').innerHTML = `
+                    <div style="text-align:center; padding:50px;">
+                        <h2 style="color:#E50914;">Erro de conexão</h2>
+                        <p>Não foi possível carregar seus dados. Tente novamente.</p>
+                        <a href="login.html" style="color:#E50914;">Voltar para o login</a>
+                    </div>
+                `;
+                console.error('Erro:', error);
             }
         }
         
-        document.getElementById('token').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') fazerLogin();
-        });
-        document.getElementById('senha').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') fazerLogin();
-        });
+        function renderizarDashboard(dados) {
+            const aluno = dados.aluno;
+            const boletos = dados.boletos || [];
+            const evolucao = dados.evolucao;
+            const chavePix = dados.chave_pix || '16993272278';
+            
+            const sugestoes = gerarSugestoes(aluno.perfil_aprendizagem, aluno.ultimo_nivel);
+            
+            let statusClass = '';
+            let statusText = '';
+            switch(aluno.status_matricula?.toLowerCase()) {
+                case 'ativa':
+                    statusClass = 'status-ativa';
+                    statusText = '✅ Ativa';
+                    break;
+                case 'suspensa':
+                    statusClass = 'status-suspensa';
+                    statusText = '⚠️ Suspensa';
+                    break;
+                case 'cancelada':
+                    statusClass = 'status-cancelada';
+                    statusText = '❌ Cancelada';
+                    break;
+                default:
+                    statusClass = '';
+                    statusText = aluno.status_matricula || 'Não informado';
+            }
+            
+            const html = `
+                <div class="dashboard-header">
+                    <div class="header-content">
+                        <div class="logo">
+                            <h2>Diandra</h2>
+                            <p>Área do Aluno</p>
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name">👋 Olá, ${aluno.nome}</span>
+                            <a href="login.html" class="logout-btn" onclick="sessionStorage.clear()">Sair</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-container">
+                    <div class="welcome-card">
+                        <h1>🎓 Bem-vindo(a) de volta!</h1>
+                        <p>Seu último acesso foi em ${aluno.ultimo_acesso || 'primeiro acesso'}.</p>
+                        <p style="margin-top: 8px;">👩‍🏫 Professora responsável: <strong>${aluno.responsavel_financeiro || 'Diandra'}</strong></p>
+                    </div>
+                    
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <div class="card-icon">📋</div>
+                            <div class="card-title">Status da Matrícula</div>
+                            <div class="card-value ${statusClass}">${statusText}</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="card-icon">📊</div>
+                            <div class="card-title">Nível Atual</div>
+                            <div class="card-value">${aluno.ultimo_nivel || 'Não avaliado'}</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="card-icon">🧠</div>
+                            <div class="card-title">Perfil de Aprendizagem</div>
+                            <div class="card-value">${aluno.perfil_aprendizagem || 'Não definido'}</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="card-icon">📅</div>
+                            <div class="card-title">Plano de Estudos</div>
+                            <div class="card-value">${aluno.plano_estudos || 'Não definido'}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="evolution-card">
+                        <div class="evolution-title">📈 Sua Evolução</div>
+                        <div class="level-comparison">
+                            <div class="level-item">
+                                <div class="level-label">NÍVEL INICIAL</div>
+                                <div class="level-value">${evolucao.nivel_inicial || aluno.ultimo_nivel}</div>
+                            </div>
+                            <div class="arrow">→</div>
+                            <div class="level-item">
+                                <div class="level-label">NÍVEL ATUAL</div>
+                                <div class="level-value">${evolucao.nivel_atual}</div>
+                            </div>
+                        </div>
+                        <div class="evolution-message">${evolucao.mensagem}</div>
+                    </div>
+                    
+                    <h3 class="section-title">💰 Boletos e Mensalidades</h3>
+                    ${renderizarBoletos(boletos)}
+                    
+                    <div class="pix-card">
+                        <div class="card-icon" style="font-size: 1.5rem;">💳</div>
+                        <div class="card-title">Pagamento via PIX</div>
+                        <div class="pix-key-container">
+                            <span class="pix-key-text" id="pixKeyValue">${chavePix}</span>
+                            <button class="copy-btn" id="copyPixBtn" onclick="copiarPix()">📋 Copiar Chave PIX</button>
+                            <span id="copyFeedback" class="copy-feedback">✅ Copiado!</span>
+                        </div>
+                        <p style="font-size: 0.7rem; color: #b3b3b3; margin-top: 10px;">Após o pagamento, envie o comprovante para seu professor</p>
+                    </div>
+                    
+                    ${aluno.observacoes ? `
+                    <div style="margin-bottom: 30px; background: rgba(229,9,20,0.1); border-radius: 8px; padding: 15px;">
+                        <strong>📝 Observações do Professor:</strong>
+                        <p style="margin-top: 10px; color: #b3b3b3;">${aluno.observacoes}</p>
+                    </div>
+                    ` : ''}
+                    
+                    <h3 class="section-title">📚 Plano de Estudos Personalizado</h3>
+                    <div class="sugestoes-card">
+                        <div class="plano-recomendado">
+                            <strong>🎯 Recomendação para seu nível:</strong><br>
+                            ${sugestoes.nivel_sugestao}
+                        </div>
+                        <ul class="sugestoes-list">
+                            ${sugestoes.perfil_sugestoes.map(s => `<li>${s}</li>`).join('')}
+                        </ul>
+                        <div class="plano-recomendado" style="margin-top: 20px;">
+                            <strong>📌 ${sugestoes.plano_recomendado}</strong>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('app').innerHTML = html;
+        }
+        
+        function renderizarBoletos(boletos) {
+            if (!boletos || boletos.length === 0) {
+                return `
+                    <div style="background: rgba(20,20,20,0.8); border-radius: 12px; padding: 30px; text-align: center;">
+                        <p style="color: #b3b3b3;">Nenhum boleto encontrado. Em breve atualizaremos seus dados financeiros.</p>
+                    </div>
+                `;
+            }
+            
+            const ultimoPg = boletos[0]?.ultimo_pg || '';
+            
+            return `
+                <div style="margin-bottom: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 10px 15px;">
+                    <span style="font-size: 0.8rem;">📢 ${ultimoPg}</span>
+                </div>
+                <div class="boletos-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Vencimento</th>
+                                <th>Mensalidade</th>
+                                <th>Descontos</th>
+                                <th>Valor Final</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${boletos.map(boleto => `
+                                <tr>
+                                    <td>${boleto.data_vencimento || '—'}</td>
+                                    <td>${boleto.valor_mensalidade || 'R$ 0,00'}</td>
+                                    <td style="color:#4CAF50;">- ${boleto.descontos || 'R$ 0,00'}</td>
+                                    <td><strong>${boleto.valor_final || 'R$ 0,00'}</strong></td>
+                                    <td class="${getStatusClass(boleto.status)}">${getStatusText(boleto.status)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        function gerarSugestoes(perfil, nivel) {
+            const sugestoesMap = {
+                Visual: [
+                    '🎨 Use flashcards com imagens coloridas',
+                    '📺 Assista vídeos com legendas em inglês',
+                    '📖 Leia textos em voz alta para fixar',
+                    '🎯 Crie mapas mentais dos temas estudados'
+                ],
+                Auditivo: [
+                    '🎧 Ouça podcasts em inglês no caminho',
+                    '🎵 Cante músicas acompanhando a letra',
+                    '🗣️ Grave sua voz e compare com nativos',
+                    '📻 Assista séries com áudio original'
+                ],
+                Cinestésico: [
+                    '✍️ Escreva frases manualmente todos os dias',
+                    '🎭 Role-play de situações do dia a dia',
+                    '🏃 Associe movimentos ao novo vocabulário',
+                    '🎲 Use jogos interativos para praticar'
+                ]
+            };
+            
+            const sugestoesNivel = {
+                iniciante: '🌟 Comece com vocabulário básico e frases simples. Pratique 20 minutos por dia, todos os dias.',
+                intermediario: '🚀 Foque em conversação e listening. Aumente para 30 minutos diários com conteúdos reais.',
+                avancado: '🎯 Pratique com nativos e conteúdos avançados. Dedique 40 minutos diários.'
+            };
+            
+            let nivelKey = 'iniciante';
+            const nivelUpper = nivel?.toUpperCase() || '';
+            if (nivelUpper.includes('B')) nivelKey = 'intermediario';
+            if (nivelUpper.includes('C')) nivelKey = 'avancado';
+            
+            const perfilSugestoes = sugestoesMap[perfil] || sugestoesMap.Visual;
+            
+            let planoRecomendado = '';
+            if (perfil === 'Visual') planoRecomendado = '📖 Estudos com foco em leitura e recursos visuais. Recomendo 25min/dia.';
+            else if (perfil === 'Auditivo') planoRecomendado = '🎧 Estudos com foco em listening e pronúncia. Recomendo 30min/dia.';
+            else if (perfil === 'Cinestésico') planoRecomendado = '✍️ Estudos ativos com escrita e prática. Recomendo 20min/dia + exercícios práticos.';
+            else planoRecomendado = '📚 Estudos equilibrados entre leitura, escrita e listening. Recomendo 25min/dia.';
+            
+            return {
+                perfil_sugestoes: perfilSugestoes,
+                nivel_sugestao: sugestoesNivel[nivelKey],
+                plano_recomendado: planoRecomendado
+            };
+        }
+        
+        function copiarPix() {
+            // Pega o valor correto da chave PIX (apenas o número)
+            const pixKeyElement = document.getElementById('pixKeyValue');
+            const pixKey = pixKeyElement ? pixKeyElement.innerText.trim() : '';
+            
+            if (pixKey) {
+                navigator.clipboard.writeText(pixKey).then(() => {
+                    // Feedback visual: muda a cor do botão
+                    const btn = document.getElementById('copyPixBtn');
+                    const feedback = document.getElementById('copyFeedback');
+                    
+                    btn.classList.add('copied');
+                    btn.textContent = '✅ Copiado!';
+                    feedback.classList.add('show');
+                    
+                    // Volta ao normal após 2 segundos
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.textContent = '📋 Copiar Chave PIX';
+                        feedback.classList.remove('show');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Erro ao copiar:', err);
+                    alert('Não foi possível copiar. Tente selecionar manualmente.');
+                });
+            } else {
+                alert('Chave PIX não encontrada.');
+            }
+        }
+        
+        carregarDados();
     </script>
 </body>
 </html>
