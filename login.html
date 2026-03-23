@@ -22,17 +22,18 @@
         }
         
         .login-container {
-            background: rgba(20, 20, 20, 0.9);
-            border-radius: 12px;
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 24px;
             padding: 40px;
             max-width: 400px;
             width: 100%;
             border: 1px solid rgba(229, 9, 20, 0.3);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
         }
         
         .logo {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 32px;
         }
         
         .logo h1 {
@@ -43,6 +44,7 @@
         .logo p {
             color: #b3b3b3;
             font-size: 0.8rem;
+            margin-top: 4px;
         }
         
         .input-group {
@@ -53,35 +55,39 @@
             display: block;
             color: #b3b3b3;
             margin-bottom: 8px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
         
         input {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background: #1a1a1a;
             border: 1px solid #333;
-            border-radius: 4px;
+            border-radius: 12px;
             color: white;
             font-size: 1rem;
+            transition: all 0.3s;
         }
         
         input:focus {
             outline: none;
             border-color: #E50914;
+            box-shadow: 0 0 0 2px rgba(229,9,20,0.2);
         }
         
         button {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background: #E50914;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 12px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            margin-top: 8px;
         }
         
         button:hover {
@@ -90,10 +96,11 @@
         }
         
         .error {
-            background: rgba(229, 9, 20, 0.2);
+            background: rgba(229, 9, 20, 0.15);
             border-left: 3px solid #E50914;
-            padding: 10px;
-            margin-top: 15px;
+            padding: 12px;
+            margin-top: 20px;
+            border-radius: 8px;
             font-size: 0.8rem;
             color: #E50914;
             display: none;
@@ -101,24 +108,31 @@
         
         .help {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 24px;
             color: #666;
             font-size: 0.7rem;
         }
         
         .back-link {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 16px;
         }
         
         .back-link a {
             color: #666;
             text-decoration: none;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            transition: color 0.2s;
         }
         
         .back-link a:hover {
             color: #E50914;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 28px 24px;
+            }
         }
     </style>
 </head>
@@ -126,7 +140,7 @@
     <div class="login-container">
         <div class="logo">
             <h1>Área do Aluno</h1>
-            <p>Digite seu token de acesso</p>
+            <p>Digite seu token e senha de acesso</p>
         </div>
         
         <div class="input-group">
@@ -134,12 +148,17 @@
             <input type="text" id="token" placeholder="Ex: 1001" autocomplete="off">
         </div>
         
+        <div class="input-group">
+            <label>🔒 Senha</label>
+            <input type="password" id="senha" placeholder="Sua senha de acesso">
+        </div>
+        
         <button onclick="fazerLogin()">Entrar →</button>
         
         <div id="error" class="error"></div>
         
         <div class="help">
-            💡 Seu token foi enviado no seu email de matrícula
+            💡 Seu token e senha foram enviados no seu email de matrícula
         </div>
         
         <div class="back-link">
@@ -148,37 +167,32 @@
     </div>
     
     <script>
-        // ============================================
-        // URL DO SEU BACKEND (Google Apps Script)
-        // ============================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbymaWWBf5OEV0oFLuRwhYpCk8aSEx1FwPTz25MWLxy-xsQikwxoVqLOGKZ4Xys1HtDf/exec';
         
         async function fazerLogin() {
             const token = document.getElementById('token').value.trim();
+            const senha = document.getElementById('senha').value.trim();
             const errorDiv = document.getElementById('error');
             
-            if (!token) {
+            if (!token || !senha) {
                 errorDiv.style.display = 'block';
-                errorDiv.textContent = 'Por favor, digite seu token de acesso';
+                errorDiv.textContent = 'Por favor, preencha token e senha';
                 return;
             }
             
             errorDiv.style.display = 'none';
             
             try {
-                // Chama a API para autenticar
-                const response = await fetch(`${API_URL}?action=autenticar&token=${encodeURIComponent(token)}`);
+                const response = await fetch(`${API_URL}?action=autenticar&token=${encodeURIComponent(token)}&senha=${encodeURIComponent(senha)}`);
                 const result = await response.json();
                 
                 if (result.success) {
-                    // Salva token na sessão
                     sessionStorage.setItem('alunoToken', result.token);
                     sessionStorage.setItem('alunoNome', result.nome);
-                    // Redireciona para o dashboard
                     window.location.href = `dashboard.html?token=${result.token}`;
                 } else {
                     errorDiv.style.display = 'block';
-                    errorDiv.textContent = result.message || 'Token inválido. Verifique e tente novamente.';
+                    errorDiv.textContent = result.message || 'Token ou senha inválidos';
                 }
             } catch (error) {
                 errorDiv.style.display = 'block';
@@ -188,9 +202,10 @@
         }
         
         document.getElementById('token').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                fazerLogin();
-            }
+            if (e.key === 'Enter') fazerLogin();
+        });
+        document.getElementById('senha').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') fazerLogin();
         });
     </script>
 </body>
