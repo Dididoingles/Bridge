@@ -389,10 +389,28 @@
             return status || '—';
         }
         
+        // ============================================
+        // FUNÇÕES AUXILIARES PARA CÁLCULO NO FRONTEND
+        // ============================================
+        function extrairNumeroValor(valorStr) {
+            if (!valorStr) return 0;
+            const str = String(valorStr);
+            // Remove R$, espaços, pontos de milhar e troca vírgula por ponto
+            const numero = parseFloat(str.replace(/R\$/g, '').replace(/\./g, '').replace(/,/g, '.').trim());
+            return isNaN(numero) ? 0 : numero;
+        }
+        
+        function formatarMoeda(valor) {
+            if (isNaN(valor)) return 'R$ 0,00';
+            return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+        
         async function carregarDados() {
             try {
+                console.log('🔍 Buscando dados para token:', token);
                 const response = await fetch(`${API_URL}?action=buscar&token=${encodeURIComponent(token)}`);
                 const result = await response.json();
+                console.log('📦 Dados recebidos:', result);
                 
                 if (result.success) {
                     renderizarDashboard(result);
@@ -406,6 +424,7 @@
                     `;
                 }
             } catch (error) {
+                console.error('🔥 Erro na requisição:', error);
                 document.getElementById('app').innerHTML = `
                     <div style="text-align:center; padding:50px;">
                         <h2 style="color:#E50914;">Erro de conexão</h2>
@@ -413,7 +432,6 @@
                         <a href="login.html" style="color:#E50914;">Voltar para o login</a>
                     </div>
                 `;
-                console.error('Erro:', error);
             }
         }
         
@@ -549,7 +567,7 @@
             if (!boletos || boletos.length === 0) {
                 return `
                     <div style="background: rgba(20,20,20,0.8); border-radius: 12px; padding: 30px; text-align: center;">
-                        <p style="color: #b3b3b3;">Nenhum boleto encontrado. Em breve atualizaremos seus dados financeiros.</p>
+                        <p style="color: #b3b3b3;">Nenhum boleto encontrado.</p>
                     </div>
                 `;
             }
@@ -572,15 +590,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            ${boletos.map(boleto => `
-                                <tr>
-                                    <td>${boleto.data_vencimento || '—'}</td>
-                                    <td>${boleto.valor_mensalidade || 'R$ 0,00'}</td>
-                                    <td style="color:#4CAF50;">- ${boleto.descontos || 'R$ 0,00'}</td>
-                                    <td><strong>${boleto.valor_final || 'R$ 0,00'}</strong></td>
-                                    <td class="${getStatusClass(boleto.status)}">${getStatusText(boleto.status)}</td>
-                                </tr>
-                            `).join('')}
+                            ${boletos.map(boleto => {
+                                const valorMensalidade = extrairNumeroValor(boleto.valor_mensalidade_bruto);
+                                const descontos = extrairNumeroValor(boleto.descontos_bruto);
+                                const valorFinal = valorMensalidade - descontos;
+                                
+                                return `
+                                    <tr>
+                                        <td>${boleto.data_vencimento || '—'}</td>
+                                        <td>${formatarMoeda(valorMensalidade)}</td>
+                                        <td style="color:#4CAF50;">- ${formatarMoeda(descontos)}</td>
+                                        <td><strong>${formatarMoeda(valorFinal)}</strong></td>
+                                        <td class="${getStatusClass(boleto.status)}">${getStatusText(boleto.status)}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
                         </tbody>
                     </table>
                 </div>
@@ -636,13 +660,11 @@
         }
         
         function copiarPix() {
-            // Pega o valor correto da chave PIX (apenas o número)
             const pixKeyElement = document.getElementById('pixKeyValue');
             const pixKey = pixKeyElement ? pixKeyElement.innerText.trim() : '';
             
             if (pixKey) {
                 navigator.clipboard.writeText(pixKey).then(() => {
-                    // Feedback visual: muda a cor do botão
                     const btn = document.getElementById('copyPixBtn');
                     const feedback = document.getElementById('copyFeedback');
                     
@@ -650,7 +672,6 @@
                     btn.textContent = '✅ Copiado!';
                     feedback.classList.add('show');
                     
-                    // Volta ao normal após 2 segundos
                     setTimeout(() => {
                         btn.classList.remove('copied');
                         btn.textContent = '📋 Copiar Chave PIX';
