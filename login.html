@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área do Aluno - Diandra</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #080808 0%, #000c1f 100%);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: rgba(20, 20, 20, 0.9);
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid rgba(229, 9, 20, 0.3);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo h1 {
+            color: #E50914;
+            font-size: 1.8rem;
+        }
+        
+        .logo p {
+            color: #b3b3b3;
+            font-size: 0.8rem;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            color: #b3b3b3;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #E50914;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #E50914;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #b20710;
+            transform: scale(1.02);
+        }
+        
+        .error {
+            background: rgba(229, 9, 20, 0.2);
+            border-left: 3px solid #E50914;
+            padding: 10px;
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #E50914;
+            display: none;
+        }
+        
+        .help {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.7rem;
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .back-link a {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+        
+        .back-link a:hover {
+            color: #E50914;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>Área do Aluno</h1>
+            <p>Digite seu token de acesso</p>
+        </div>
+        
+        <div class="input-group">
+            <label>🔑 Token de Acesso</label>
+            <input type="text" id="token" placeholder="Ex: 1001" autocomplete="off">
+        </div>
+        
+        <button onclick="fazerLogin()">Entrar →</button>
+        
+        <div id="error" class="error"></div>
+        
+        <div class="help">
+            💡 Seu token foi enviado no seu email de matrícula
+        </div>
+        
+        <div class="back-link">
+            <a href="index.html">← Voltar para o site</a>
+        </div>
+    </div>
+    
+    <script>
+        // ============================================
+        // URL DO SEU BACKEND (Google Apps Script)
+        // ============================================
+        const API_URL = 'https://script.google.com/macros/s/AKfycbymaWWBf5OEV0oFLuRwhYpCk8aSEx1FwPTz25MWLxy-xsQikwxoVqLOGKZ4Xys1HtDf/exec';
+        
+        async function fazerLogin() {
+            const token = document.getElementById('token').value.trim();
+            const errorDiv = document.getElementById('error');
+            
+            if (!token) {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = 'Por favor, digite seu token de acesso';
+                return;
+            }
+            
+            errorDiv.style.display = 'none';
+            
+            try {
+                // Chama a API para autenticar
+                const response = await fetch(`${API_URL}?action=autenticar&token=${encodeURIComponent(token)}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Salva token na sessão
+                    sessionStorage.setItem('alunoToken', result.token);
+                    sessionStorage.setItem('alunoNome', result.nome);
+                    // Redireciona para o dashboard
+                    window.location.href = `dashboard.html?token=${result.token}`;
+                } else {
+                    errorDiv.style.display = 'block';
+                    errorDiv.textContent = result.message || 'Token inválido. Verifique e tente novamente.';
+                }
+            } catch (error) {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = 'Erro de conexão. Tente novamente.';
+                console.error('Erro:', error);
+            }
+        }
+        
+        document.getElementById('token').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                fazerLogin();
+            }
+        });
+    </script>
+</body>
+</html>
