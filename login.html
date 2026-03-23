@@ -95,6 +95,36 @@
             transform: scale(1.02);
         }
         
+        /* Estilo do botão quando está carregando */
+        button.loading {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.7;
+        }
+        
+        button.loading:hover {
+            background: #666;
+            transform: none;
+        }
+        
+        /* Spinner de carregamento */
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
         .error {
             background: rgba(229, 9, 20, 0.15);
             border-left: 3px solid #E50914;
@@ -153,7 +183,7 @@
             <input type="password" id="senha" placeholder="Sua senha de acesso">
         </div>
         
-        <button onclick="fazerLogin()">Entrar →</button>
+        <button id="loginBtn" onclick="fazerLogin()">Entrar →</button>
         
         <div id="error" class="error"></div>
         
@@ -173,6 +203,7 @@
             const token = document.getElementById('token').value.trim();
             const senha = document.getElementById('senha').value.trim();
             const errorDiv = document.getElementById('error');
+            const loginBtn = document.getElementById('loginBtn');
             
             if (!token || !senha) {
                 errorDiv.style.display = 'block';
@@ -181,6 +212,14 @@
             }
             
             errorDiv.style.display = 'none';
+            
+            // === FEEDBACK VISUAL DE CARREGAMENTO ===
+            // Salva o texto original do botão
+            const textoOriginal = loginBtn.innerHTML;
+            // Muda o botão para estado de carregamento
+            loginBtn.classList.add('loading');
+            loginBtn.innerHTML = '<span class="spinner"></span> Entrando...';
+            loginBtn.disabled = true;
             
             try {
                 const response = await fetch(`${API_URL}?action=autenticar&token=${encodeURIComponent(token)}&senha=${encodeURIComponent(senha)}`);
@@ -191,10 +230,20 @@
                     sessionStorage.setItem('alunoNome', result.nome);
                     window.location.href = `dashboard.html?token=${result.token}`;
                 } else {
+                    // Restaura o botão em caso de erro
+                    loginBtn.classList.remove('loading');
+                    loginBtn.innerHTML = textoOriginal;
+                    loginBtn.disabled = false;
+                    
                     errorDiv.style.display = 'block';
                     errorDiv.textContent = result.message || 'Token ou senha inválidos';
                 }
             } catch (error) {
+                // Restaura o botão em caso de erro
+                loginBtn.classList.remove('loading');
+                loginBtn.innerHTML = textoOriginal;
+                loginBtn.disabled = false;
+                
                 errorDiv.style.display = 'block';
                 errorDiv.textContent = 'Erro de conexão. Tente novamente.';
                 console.error('Erro:', error);
