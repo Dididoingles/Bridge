@@ -373,6 +373,37 @@
             window.location.href = 'login.html';
         }
         
+        // ============================================
+        // FUNÇÃO PARA CALCULAR TEMPO COMO ALUNO
+        // ============================================
+        function calcularTempoDesde(dataInicioStr) {
+            if (!dataInicioStr) return null;
+            const partes = dataInicioStr.split('/');
+            const inicio = new Date(partes[2], partes[1] - 1, partes[0]);
+            const hoje = new Date();
+            
+            let anos = hoje.getFullYear() - inicio.getFullYear();
+            let meses = hoje.getMonth() - inicio.getMonth();
+            let dias = hoje.getDate() - inicio.getDate();
+            
+            if (dias < 0) {
+                meses--;
+                const ultimoDiaMesAnterior = new Date(hoje.getFullYear(), hoje.getMonth(), 0).getDate();
+                dias += ultimoDiaMesAnterior;
+            }
+            if (meses < 0) {
+                anos--;
+                meses += 12;
+            }
+            
+            const partesTexto = [];
+            if (anos > 0) partesTexto.push(`${anos} ${anos === 1 ? 'ano' : 'anos'}`);
+            if (meses > 0) partesTexto.push(`${meses} ${meses === 1 ? 'mês' : 'meses'}`);
+            if (dias > 0) partesTexto.push(`${dias} ${dias === 1 ? 'dia' : 'dias'}`);
+            
+            return partesTexto.join(', ');
+        }
+        
         function getStatusClass(status) {
             const s = status?.toLowerCase() || '';
             if (s === 'pago') return 'status-pago';
@@ -471,6 +502,9 @@
                     statusText = aluno.status_matricula || 'Não informado';
             }
             
+            // Calcula o tempo de aluno se existir data_inicio
+            const tempoAluno = aluno.data_inicio ? calcularTempoDesde(aluno.data_inicio) : null;
+            
             const html = `
                 <div class="dashboard-header">
                     <div class="header-content">
@@ -489,6 +523,7 @@
                     <div class="welcome-card">
                         <h1>🎓 Bem-vindo(a) de volta!</h1>
                         <p>Seu último acesso foi em ${aluno.ultimo_acesso || 'primeiro acesso'}.</p>
+                        ${tempoAluno ? `<p>📅 Você é nosso aluno há <strong>${tempoAluno}</strong>!</p>` : ''}
                         <p style="margin-top: 8px;">👩‍🏫 Professora responsável: <strong>${aluno.professor_responsavel || 'Diandra'}</strong></p>
                     </div>
                     
